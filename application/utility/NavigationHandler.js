@@ -11,7 +11,7 @@ import { Dimensions } from "react-native";
 
 // Screens Import
 import HomeScreen from "../screens/application-stack/HomeScreen";
-import EcoTips from "../screens/application-stack/EcoTipsScreen";
+import { EcoTipsStack } from "../screens/application-stack/EcoTipsScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import TrackerScreen from "../screens/application-stack/TrackerScreen";
 import ChallengeScreen from "../screens/application-stack/ChallengeScreen";
@@ -154,7 +154,7 @@ export const AppStack = () => {
 			/>
 			<Drawer.Screen
 				name="Eco Tips"
-				component={EcoTips}
+				component={EcoTipsStack}
 				options={{
 					drawerIcon: () => <Icon name="leaf" size={40} color={color.white} />,
 				}}
