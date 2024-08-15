@@ -4,7 +4,7 @@ import React from "react";
 const PasswordReset = () => {
 	return (
 		<View>
-			<Text>PasswordReset</Text>
+			<Text>Test</Text>
 		</View>
 	);
 };

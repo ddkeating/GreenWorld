@@ -6,7 +6,11 @@ import {
 } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text, View, TouchableOpacity } from "react-native";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
+import {
+	DrawerActions,
+	NavigationContainer,
+	useNavigation,
+} from "@react-navigation/native";
 import { Dimensions } from "react-native";
 
 // Screens Import
@@ -20,21 +24,80 @@ import SettingsDetails from "../screens/account-settings/SettingsDetails";
 import ProductScreen from "../screens/application-stack/ProductScreen";
 import ArticlesScreen from "../screens/application-stack/ArticlesScreen";
 import ProfileScreen from "../screens/application-stack/ProfileScreen";
+import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
+import TermsOfService from "../screens/policies/TermsOfService";
+import LandingScreen from "../screens/authentication/LandingScreen";
+import PasswordReset from "../screens/authentication/PasswordReset";
 
 // Config
 import color from "../config/color";
 import font from "../config/font";
 import CustomDrawerContent from "../components/CustomDrawerView";
-import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
-import TermsOfService from "../screens/policies/TermsOfService";
+import LoginScreen from "../screens/authentication/LoginScreen";
+import RegisterScreen from "../screens/authentication/RegisterScreen";
+import NavigationBackBtn from "../components/NavigationBackBtn";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 export const AuthStack = () => {
+	const navigation = useNavigation();
 	return (
-		<Stack.Navigator>
-			<Stack.Screen name="Home" component={HomeScreen} />
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+				header: () => (
+					<View
+						style={{
+							backgroundColor: color.primary,
+							height: Dimensions.get("screen").height * 0.12,
+							width: "100%",
+							position: "absolute",
+							alignItems: "flex-start",
+							paddingLeft: 10,
+							paddingBottom: 10,
+							justifyContent: "flex-end",
+						}}
+					>
+						<NavigationBackBtn navigation={navigation} />
+					</View>
+				),
+			}}
+		>
+			<Stack.Screen name="Landing" component={LandingScreen} />
+			<Stack.Screen
+				name="Privacy Policy"
+				component={PrivacyPolicy}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Terms Of Service"
+				component={TermsOfService}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Login"
+				component={LoginScreen}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Register"
+				component={RegisterScreen}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Password Reset"
+				component={PasswordReset}
+				options={{ headerShown: true }}
+			/>
 		</Stack.Navigator>
 	);
 };
@@ -76,6 +139,7 @@ export const AppStack = () => {
 				drawerContentStyle: {
 					margin: 0,
 				},
+
 				headerLeft: () => (
 					<Text
 						style={{
@@ -84,7 +148,9 @@ export const AppStack = () => {
 							color: color.white,
 							textTransform: "uppercase",
 							paddingLeft: 10,
-							width: 300,
+							width:
+								Dimensions.get("screen").width -
+								Dimensions.get("screen").width * 0.2,
 						}}
 					>
 						Greenworld
@@ -188,5 +254,21 @@ export const AppStack = () => {
 				}}
 			/>
 		</Drawer.Navigator>
+	);
+};
+
+export const AppNavigator = ({ user }) => {
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			{user ? (
+				<Stack.Screen name="App" component={AppStack} />
+			) : (
+				<Stack.Screen name="Auth" component={AuthStack} />
+			)}
+		</Stack.Navigator>
 	);
 };
