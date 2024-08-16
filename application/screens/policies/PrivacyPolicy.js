@@ -8,6 +8,7 @@ const PrivacyPolicy = () => {
 	return (
 		<MainView>
 			<View style={styles.container}>
+				<Text style={styles.headerText}>Privacy Policy</Text>
 				<Text style={styles.privacyContent}>
 					Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat
 					possimus earum sequi aspernatur qui, laboriosam, natus et culpa
@@ -26,10 +27,19 @@ const styles = StyleSheet.create({
 		marginTop: Dimensions.get("window").height * 0.12,
 	},
 
+	headerText: {
+		fontSize: 28,
+		font: font.fontFamily,
+		color: color.black,
+		textAlign: "left",
+		fontWeight: "light",
+		marginVertical: 10,
+	},
+
 	privacyContent: {
 		fontFamily: font.fontFamily,
 		fontSize: 16,
-		color: color.black,
+		color: color.primary,
 		textAlign: "left",
 	},
 });

@@ -1,16 +1,11 @@
 // Module Import
 import {
 	createDrawerNavigator,
-	DrawerItem,
 	useDrawerStatus,
 } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Text, View, TouchableOpacity } from "react-native";
-import {
-	DrawerActions,
-	NavigationContainer,
-	useNavigation,
-} from "@react-navigation/native";
+import { Text, View, TouchableOpacity, StatusBar } from "react-native";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { Dimensions } from "react-native";
 
 // Screens Import
@@ -28,18 +23,20 @@ import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
 import TermsOfService from "../screens/policies/TermsOfService";
 import LandingScreen from "../screens/authentication/LandingScreen";
 import PasswordReset from "../screens/authentication/PasswordReset";
+import LoginScreen from "../screens/authentication/LoginScreen";
+import RegisterScreen from "../screens/authentication/RegisterScreen";
 
 // Config
 import color from "../config/color";
 import font from "../config/font";
 import CustomDrawerContent from "../components/CustomDrawerView";
-import LoginScreen from "../screens/authentication/LoginScreen";
-import RegisterScreen from "../screens/authentication/RegisterScreen";
 import NavigationBackBtn from "../components/NavigationBackBtn";
+import { useAuthHook } from "./firebase-modules/UseAuthHook";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
+// Authentication Stack Navigator for the authentication screens.
 export const AuthStack = () => {
 	const navigation = useNavigation();
 	return (
@@ -50,7 +47,7 @@ export const AuthStack = () => {
 					<View
 						style={{
 							backgroundColor: color.primary,
-							height: Dimensions.get("screen").height * 0.12,
+							height: Dimensions.get("screen").height * 0.11,
 							width: "100%",
 							position: "absolute",
 							alignItems: "flex-start",
@@ -59,6 +56,7 @@ export const AuthStack = () => {
 							justifyContent: "flex-end",
 						}}
 					>
+						<StatusBar barStyle="light-content" />
 						<NavigationBackBtn navigation={navigation} />
 					</View>
 				),
@@ -102,6 +100,7 @@ export const AuthStack = () => {
 	);
 };
 
+// Main Application Stack Navigator for the main application screens
 export const AppStack = () => {
 	const navigation = useNavigation();
 	const headerHeight = 100;
@@ -257,7 +256,9 @@ export const AppStack = () => {
 	);
 };
 
-export const AppNavigator = ({ user }) => {
+// Navigation Handler Function to determine which stack to display.
+export const AppNavigator = () => {
+	const { user } = useAuthHook();
 	return (
 		<Stack.Navigator
 			screenOptions={{

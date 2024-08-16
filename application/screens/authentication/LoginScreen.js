@@ -1,3 +1,4 @@
+// Module Imports
 import {
 	StyleSheet,
 	Text,
@@ -6,25 +7,48 @@ import {
 	Platform,
 	TextInput,
 	KeyboardAvoidingView,
+	Dimensions,
+	TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 // Component Imports
 import CustomBtn from "../../components/CustomBtn";
+import LoadingOverlay from "../../components/Loading";
+
+// Authentication Imports
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../utility/firebase-modules/Firebase";
 
 // Config Imports
 import font from "../../config/font";
 import color from "../../config/color";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const LoginScreen = ({ navigation }) => {
+	// State Variables for Login Screen
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 
-	const handleLogin = () => {
-		console.log(email, password);
+	// State Variables for Error Handling and Loading Overlay
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+
+	// Function to handle user login via Firebase Auth API.
+	const handleLogin = async () => {
+		if (!email || !password) {
+			setError("Please fill in all fields");
+			return;
+		}
+		setLoading(true);
+
+		try {
+			await signInWithEmailAndPassword(auth, email, password);
+		} catch (error) {
+			console.log(error);
+		}
+		setLoading(false);
 	};
 
 	return (
@@ -40,19 +64,25 @@ const LoginScreen = ({ navigation }) => {
 					<Text style={styles.inputLabel}>Email</Text>
 					<View style={styles.inputContainer}>
 						<TextInput
+							autoComplete="email"
 							placeholder="Email"
 							onChangeText={(text) => setEmail(text)}
 							style={styles.input}
+							keyboardType="email-address"
+							value={email}
 						/>
 						<Icon name="email" size={24} color={color.primary} />
 					</View>
 					<Text style={styles.inputLabel}>Password</Text>
 					<View style={styles.inputContainer}>
 						<TextInput
+							textContentType="password"
+							autoCapitalize="none"
 							placeholder="Password"
 							onChangeText={(text) => setPassword(text)}
 							style={styles.input}
 							secureTextEntry={showPassword}
+							value={password}
 						/>
 						<TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
 							<Icon
@@ -67,6 +97,7 @@ const LoginScreen = ({ navigation }) => {
 					>
 						<Text style={styles.passwordForgetText}>Forgot your password</Text>
 					</TouchableOpacity>
+					<Text></Text>
 					<View style={styles.btnContainer}>
 						<CustomBtn
 							title="Login"
@@ -77,6 +108,7 @@ const LoginScreen = ({ navigation }) => {
 					</View>
 				</View>
 			</KeyboardAvoidingView>
+			<LoadingOverlay isLoading={loading} />
 		</View>
 	);
 };
@@ -90,7 +122,7 @@ const styles = StyleSheet.create({
 	},
 	landingImg: {
 		width: "100%",
-		height: "50%",
+		height: Dimensions.get("window").height * 0.45,
 	},
 	headerText: {
 		fontSize: 38,
@@ -121,6 +153,7 @@ const styles = StyleSheet.create({
 		fontFamily: font.fontFamily,
 		color: color.primary,
 		width: "80%",
+		flexGrow: 1,
 	},
 
 	inputLabel: {

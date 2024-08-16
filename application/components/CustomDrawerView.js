@@ -1,22 +1,21 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import {
-	DrawerContentScrollView,
-	DrawerContent,
-	DrawerItemList,
-} from "@react-navigation/drawer";
+import { DrawerContent, DrawerItemList } from "@react-navigation/drawer";
 import color from "../config/color";
 import font from "../config/font";
 import { useNavigation } from "@react-navigation/native";
 
+// Custom Drawer Content Component for the Drawer Navigation in the application.
 const CustomDrawerContent = (props) => {
 	const navigation = useNavigation();
 
 	return (
 		<View style={{ flex: 1 }}>
+			{/* Drawer Content */}
 			<DrawerContent {...props}>
 				<DrawerItemList {...props} />
 			</DrawerContent>
+			{/* Footer */}
 			<View style={styles.footer}>
 				<View style={styles.links}>
 					<TouchableOpacity

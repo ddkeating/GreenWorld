@@ -1,9 +1,19 @@
-import { Image, Platform, StyleSheet, Text, View } from "react-native";
+import {
+	Image,
+	Platform,
+	StyleSheet,
+	Text,
+	View,
+	TouchableOpacity,
+} from "react-native";
 import React from "react";
+
+// Config Imports
 import font from "../../config/font";
 import color from "../../config/color";
+
+// Component Imports
 import CustomBtn from "../../components/CustomBtn";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const LandingScreen = ({ navigation }) => {
 	return (
