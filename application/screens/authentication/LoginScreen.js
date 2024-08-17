@@ -24,6 +24,7 @@ import { auth } from "../../utility/firebase-modules/Firebase";
 // Config Imports
 import font from "../../config/font";
 import color from "../../config/color";
+import FirebaseErrorHandling from "../../utility/firebase-modules/FirebaseErrorHandling";
 
 const LoginScreen = ({ navigation }) => {
 	// State Variables for Login Screen
@@ -41,12 +42,13 @@ const LoginScreen = ({ navigation }) => {
 			setError("Please fill in all fields");
 			return;
 		}
+		setError("");
 		setLoading(true);
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
 		} catch (error) {
-			console.log(error);
+			setError(FirebaseErrorHandling(error));
 		}
 		setLoading(false);
 	};
@@ -57,6 +59,7 @@ const LoginScreen = ({ navigation }) => {
 				<Image
 					source={require("../../assets/images/landing.png")}
 					style={styles.landingImg}
+					resizeMode="cover"
 				/>
 
 				<Text style={styles.headerText}>GreenWorld</Text>
@@ -97,7 +100,11 @@ const LoginScreen = ({ navigation }) => {
 					>
 						<Text style={styles.passwordForgetText}>Forgot your password</Text>
 					</TouchableOpacity>
-					<Text></Text>
+					{error ? (
+						<Text style={{ color: color.red, textAlign: "center" }}>
+							{error}
+						</Text>
+					) : null}
 					<View style={styles.btnContainer}>
 						<CustomBtn
 							title="Login"
@@ -121,8 +128,9 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 	},
 	landingImg: {
-		width: "100%",
-		height: Dimensions.get("window").height * 0.45,
+		width: Dimensions.get("window").width,
+		height: Dimensions.get("window").height * 0.35,
+		transform: [{ translateY: -Dimensions.get("window").height * 0.05 }],
 	},
 	headerText: {
 		fontSize: 38,
@@ -173,6 +181,6 @@ const styles = StyleSheet.create({
 	},
 
 	btnContainer: {
-		marginVertical: 30,
+		marginVertical: 20,
 	},
 });
