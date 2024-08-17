@@ -1,17 +1,16 @@
 // Module Import
 import {
 	createDrawerNavigator,
-	DrawerItem,
 	useDrawerStatus,
 } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, StatusBar } from "react-native";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { Dimensions } from "react-native";
 
 // Screens Import
 import HomeScreen from "../screens/application-stack/HomeScreen";
-import EcoTips from "../screens/application-stack/EcoTipsScreen";
+import { EcoTipsStack } from "../screens/application-stack/EcoTipsScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import TrackerScreen from "../screens/application-stack/TrackerScreen";
 import ChallengeScreen from "../screens/application-stack/ChallengeScreen";
@@ -20,25 +19,88 @@ import SettingsDetails from "../screens/account-settings/SettingsDetails";
 import ProductScreen from "../screens/application-stack/ProductScreen";
 import ArticlesScreen from "../screens/application-stack/ArticlesScreen";
 import ProfileScreen from "../screens/application-stack/ProfileScreen";
+import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
+import TermsOfService from "../screens/policies/TermsOfService";
+import LandingScreen from "../screens/authentication/LandingScreen";
+import PasswordReset from "../screens/authentication/PasswordReset";
+import LoginScreen from "../screens/authentication/LoginScreen";
+import RegisterScreen from "../screens/authentication/RegisterScreen";
 
 // Config
 import color from "../config/color";
 import font from "../config/font";
 import CustomDrawerContent from "../components/CustomDrawerView";
-import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
-import TermsOfService from "../screens/policies/TermsOfService";
+import NavigationBackBtn from "../components/NavigationBackBtn";
+import { useAuthHook } from "./firebase-modules/UseAuthHook";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
+// Authentication Stack Navigator for the authentication screens.
 export const AuthStack = () => {
+	const navigation = useNavigation();
 	return (
-		<Stack.Navigator>
-			<Stack.Screen name="Home" component={HomeScreen} />
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+				header: () => (
+					<View
+						style={{
+							backgroundColor: color.primary,
+							height: Dimensions.get("screen").height * 0.11,
+							width: "100%",
+							position: "absolute",
+							alignItems: "flex-start",
+							paddingLeft: 10,
+							paddingBottom: 10,
+							justifyContent: "flex-end",
+						}}
+					>
+						<StatusBar barStyle="light-content" />
+						<NavigationBackBtn navigation={navigation} />
+					</View>
+				),
+			}}
+		>
+			<Stack.Screen name="Landing" component={LandingScreen} />
+			<Stack.Screen
+				name="Privacy Policy"
+				component={PrivacyPolicy}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Terms Of Service"
+				component={TermsOfService}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Login"
+				component={LoginScreen}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Register"
+				component={RegisterScreen}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<Stack.Screen
+				name="Password Reset"
+				component={PasswordReset}
+				options={{ headerShown: true }}
+			/>
 		</Stack.Navigator>
 	);
 };
 
+// Main Application Stack Navigator for the main application screens
 export const AppStack = () => {
 	const navigation = useNavigation();
 	const headerHeight = 100;
@@ -76,6 +138,7 @@ export const AppStack = () => {
 				drawerContentStyle: {
 					margin: 0,
 				},
+
 				headerLeft: () => (
 					<Text
 						style={{
@@ -84,7 +147,9 @@ export const AppStack = () => {
 							color: color.white,
 							textTransform: "uppercase",
 							paddingLeft: 10,
-							width: 300,
+							width:
+								Dimensions.get("screen").width -
+								Dimensions.get("screen").width * 0.2,
 						}}
 					>
 						Greenworld
@@ -154,7 +219,7 @@ export const AppStack = () => {
 			/>
 			<Drawer.Screen
 				name="Eco Tips"
-				component={EcoTips}
+				component={EcoTipsStack}
 				options={{
 					drawerIcon: () => <Icon name="leaf" size={40} color={color.white} />,
 				}}
@@ -188,5 +253,23 @@ export const AppStack = () => {
 				}}
 			/>
 		</Drawer.Navigator>
+	);
+};
+
+// Navigation Handler Function to determine which stack to display.
+export const AppNavigator = () => {
+	const { user } = useAuthHook();
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			{user ? (
+				<Stack.Screen name="App" component={AppStack} />
+			) : (
+				<Stack.Screen name="Auth" component={AuthStack} />
+			)}
+		</Stack.Navigator>
 	);
 };

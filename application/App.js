@@ -2,15 +2,15 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import { AppStack } from "./utility/NavigationHandler";
+import { AppNavigator, AppStack, AuthStack } from "./utility/NavigationHandler";
+import { useAuthHook } from "./utility/firebase-modules/UseAuthHook";
 
 export default function App() {
-	const Drawer = createDrawerNavigator();
+	const user = useAuthHook();
 	return (
 		<NavigationContainer>
-			<AppStack />
+			<AppNavigator user={false} />
 		</NavigationContainer>
 	);
 }
