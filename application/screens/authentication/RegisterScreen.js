@@ -22,6 +22,7 @@ import LoadingOverlay from "../../components/Loading";
 import font from "../../config/font";
 import color from "../../config/color";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import FirebaseErrorHandling from "../../utility/firebase-modules/FirebaseErrorHandling";
 
 // Register Screen Component for User Registration.
 const RegisterScreen = ({ navigation }) => {
@@ -54,7 +55,7 @@ const RegisterScreen = ({ navigation }) => {
 			setError("Please accept the terms and conditions");
 			return;
 		}
-
+		setError("");
 		setLoading(true);
 
 		// Firebase Auth API call to create a new user account.
@@ -64,12 +65,14 @@ const RegisterScreen = ({ navigation }) => {
 				email,
 				password
 			);
+
 			const firebaseUser = userCredential.user;
+
 			await updateProfile(firebaseUser, {
 				displayName: username,
 			});
 		} catch (error) {
-			setError(error.message);
+			setError(FirebaseErrorHandling(error));
 		}
 		setLoading(false);
 	};
@@ -110,7 +113,7 @@ const RegisterScreen = ({ navigation }) => {
 				<Text style={styles.inputLabel}>Password</Text>
 				<View style={styles.inputContainer}>
 					<TextInput
-						textContentType="password"
+						textContentType="oneTimeCode"
 						style={styles.inputField}
 						placeholder="Password"
 						value={password}
@@ -146,7 +149,9 @@ const RegisterScreen = ({ navigation }) => {
 						/>
 					</TouchableOpacity>
 				</View>
-				<Text style={{ color: "red", textAlign: "center" }}>{error}</Text>
+				{error ? (
+					<Text style={{ color: "red", textAlign: "center" }}>{error}</Text>
+				) : null}
 				<View style={styles.termsTextAndBtn}>
 					<View style={styles.termsContainer}>
 						<Text style={styles.termsText}>I agree with the </Text>
@@ -188,8 +193,6 @@ const RegisterScreen = ({ navigation }) => {
 export default RegisterScreen;
 
 const styles = StyleSheet.create({
-	container: { marginTop: Dimensions.get("window").height * 0.12 },
-
 	headerText: {
 		fontSize: 38,
 		fontFamily: font.fontFamily,

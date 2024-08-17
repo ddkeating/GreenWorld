@@ -17,7 +17,9 @@ import ChallengeScreen from "../screens/application-stack/ChallengeScreen";
 import SettingsScreen from "../screens/account-settings/SettingsScreen";
 import SettingsDetails from "../screens/account-settings/SettingsDetails";
 import ProductScreen from "../screens/application-stack/ProductScreen";
-import ArticlesScreen from "../screens/application-stack/ArticlesScreen";
+import ArticlesScreen, {
+	ArticlesNavigator,
+} from "../screens/application-stack/ArticlesScreen";
 import ProfileScreen from "../screens/application-stack/ProfileScreen";
 import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
 import TermsOfService from "../screens/policies/TermsOfService";
@@ -32,6 +34,7 @@ import font from "../config/font";
 import CustomDrawerContent from "../components/CustomDrawerView";
 import NavigationBackBtn from "../components/NavigationBackBtn";
 import { useAuthHook } from "./firebase-modules/UseAuthHook";
+import ArticleViewScreen from "../screens/application-stack/ArticleViewScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -49,7 +52,7 @@ export const AuthStack = () => {
 							backgroundColor: color.primary,
 							height: Dimensions.get("screen").height * 0.11,
 							width: "100%",
-							position: "absolute",
+							position: "relative",
 							alignItems: "flex-start",
 							paddingLeft: 10,
 							paddingBottom: 10,
@@ -246,6 +249,15 @@ export const AppStack = () => {
 			<Drawer.Screen
 				name="Terms Of Service"
 				component={TermsOfService}
+				options={{
+					drawerItemStyle: {
+						height: 0,
+					},
+				}}
+			/>
+			<Drawer.Screen
+				name="Article View"
+				component={ArticleViewScreen}
 				options={{
 					drawerItemStyle: {
 						height: 0,

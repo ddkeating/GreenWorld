@@ -1,25 +1,11 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-
 import { NavigationContainer } from "@react-navigation/native";
 
-import { AppNavigator, AppStack, AuthStack } from "./utility/NavigationHandler";
-import { useAuthHook } from "./utility/firebase-modules/UseAuthHook";
+import { AppNavigator } from "./utility/NavigationHandler";
 
 export default function App() {
-	const user = useAuthHook();
 	return (
 		<NavigationContainer>
-			<AppNavigator user={false} />
+			<AppNavigator />
 		</NavigationContainer>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});
