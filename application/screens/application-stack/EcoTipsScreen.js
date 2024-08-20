@@ -127,6 +127,33 @@ const EnergyTips = ({navigation}) => {
 		<NavigationBackBtn navigation={navigation} color={color.primary}/>
 		<Text style={styles.headerText}>Energy Tips</Text>
 		</View>
+		<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Lighting:</Text>
+					<Text style={styles.paragraph}>
+					
+					Switch to LED Bulbs: Replace incandescent or CFL bulbs with energy-efficient LED bulbs, which use up to 75% less energy and last longer.
+					Utilize Natural Light: Open blinds and curtains during the day to maximize natural light, reducing the need for artificial lighting.
+					Turn Off Lights: Make it a habit to turn off lights when leaving a room.
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Renewable Energy:</Text>
+					<Text style={styles.paragraph}>
+					
+					Consider Solar Panels: If feasible, install solar panels to generate your own renewable energy and reduce reliance on the grid.
+					Use a Solar Water Heater: Solar water heaters can significantly reduce energy usage for heating water.
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Insulation and Home Improvements:</Text>
+					<Text style={styles.paragraph}>
+					
+					Improve Home Insulation: Properly insulate your attic, walls, and floors to reduce the need for heating and cooling.
+					Install Energy-Efficient Windows: Replace single-pane windows with double or triple-pane windows to improve insulation.
+					Use Ceiling Fans: Ceiling fans can help distribute heat in the winter and provide cooling in the summer, reducing reliance on HVAC systems. 
+					</Text>
+				</View>
+				
 		</ScrollView>
 		</MainView>
 	);
