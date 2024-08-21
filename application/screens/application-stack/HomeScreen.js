@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import Carousel from "react-native-reanimated-carousel";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { ScrollView } from "react-native-gesture-handler";
 
 // Components Imports
 import MainView from "../../components/MainView";
@@ -19,6 +20,7 @@ import { auth } from "../../utility/firebase-modules/Firebase";
 import font from "../../config/font";
 import color from "../../config/color";
 import { fetchArticleData } from "../../utility/firebase-modules/DataHandling";
+import landingImg from "../../assets/images/landing.png";
 
 const HomeScreen = ({ navigation }) => {
 	// State Variables
@@ -70,97 +72,106 @@ const HomeScreen = ({ navigation }) => {
 		},
 	];
 	return (
-		<MainView>
-			<Text style={styles.headerText}>
-				{auth.currentUser.displayName !== null
-					? "Welcome Back " + auth.currentUser.displayName
-					: "Welcome to Greenworld"}
-			</Text>
+		<ScrollView>
+			<MainView>
+				<Text style={styles.headerText}>
+					{auth.currentUser.displayName !== null
+						? "Welcome Back " + auth.currentUser.displayName
+						: "Welcome to Greenworld"}
+				</Text>
 
-			<View style={styles.carouselContainer}>
-				<Carousel
-					loop={false}
-					/* OnProgress change to update the index in realtime and therefore updating the pagination index. */
-					onProgressChange={(_, progress) => {
-						setCurrentIndex(Math.round(progress));
-					}}
-					ref={carouselRef}
-					width={Dimensions.get("window").width}
-					height={Dimensions.get("window").width}
-					autoPlay={false}
-					data={carouselItems}
-					scrollAnimationDuration={500}
-					renderItem={({ index }) => (
-						<View style={styles.carouselItemContainer}>
-							<Text style={styles.carouselItemText}>
-								{carouselItems[index].title}
-							</Text>
-						</View>
-					)}
-				/>
-			</View>
-			<View style={styles.paginationContainer}>
-				{carouselItems.map((_, index) => (
-					<TouchableOpacity key={index} onPress={() => handlePagination(index)}>
-						<View
-							style={[
-								styles.paginationButtons,
-								{
-									backgroundColor:
-										index === currentIndex ? color.secondary : color.primary,
-								},
-							]}
-						></View>
-					</TouchableOpacity>
-				))}
-			</View>
-			<View style={styles.articleSection}>
-				<TouchableOpacity
-					style={styles.latestArticlesBtn}
-					onPress={() => navigation.navigate("Articles")}
-				>
-					<Text style={styles.latestArticleText}>Latest Articles</Text>
-					<Icon name="arrow-right-thin" size={44} color={color.primary} />
-				</TouchableOpacity>
-				{articleData.length > 0 && articleData[0] ? (
-					<TouchableOpacity
-						onPress={() =>
-							navigation.navigate("Article View", {
-								articleData: articleData[0],
-							})
-						}
-					>
-						<ImageBackground
-							src={articleData[0].urlToImage}
-							style={styles.articleContainer}
-							imageStyle={styles.articleImg}
-							alt="Articles image"
-						>
-							<View style={styles.articleTextContainer}>
-								<Text
-									ellipsizeMode="tail"
-									numberOfLines={2}
-									style={styles.articleTitle}
-								>
-									{articleData[0].title}
-								</Text>
-								<Text style={styles.articleDate}>
-									{`Date: ${String(
-										new Date(articleData[0].publishedAt).getDate()
-									).padStart(2, "0")}/${String(
-										new Date(articleData[0].publishedAt).getMonth() + 1
-									).padStart(2, "0")}/${String(
-										new Date(articleData[0].publishedAt).getFullYear()
-									).slice(-2)}`}
+				<View style={styles.carouselContainer}>
+					<Carousel
+						loop={false}
+						/* OnProgress change to update the index in realtime and therefore updating the pagination index. */
+						onProgressChange={(_, progress) => {
+							setCurrentIndex(Math.round(progress));
+						}}
+						ref={carouselRef}
+						width={Dimensions.get("window").width}
+						height={Dimensions.get("window").width}
+						autoPlay={false}
+						data={carouselItems}
+						scrollAnimationDuration={500}
+						renderItem={({ index }) => (
+							<View style={styles.carouselItemContainer}>
+								<Text style={styles.carouselItemText}>
+									{carouselItems[index].title}
 								</Text>
 							</View>
-						</ImageBackground>
+						)}
+					/>
+				</View>
+				<View style={styles.paginationContainer}>
+					{carouselItems.map((_, index) => (
+						<TouchableOpacity
+							key={index}
+							onPress={() => handlePagination(index)}
+						>
+							<View
+								style={[
+									styles.paginationButtons,
+									{
+										backgroundColor:
+											index === currentIndex ? color.secondary : color.primary,
+									},
+								]}
+							></View>
+						</TouchableOpacity>
+					))}
+				</View>
+				<View style={styles.articleSection}>
+					<TouchableOpacity
+						style={styles.latestArticlesBtn}
+						onPress={() => navigation.navigate("Articles")}
+					>
+						<Text style={styles.latestArticleText}>Latest Articles</Text>
+						<Icon name="arrow-right-thin" size={44} color={color.primary} />
 					</TouchableOpacity>
-				) : (
-					<Text>Loading...</Text>
-				)}
-			</View>
-		</MainView>
+					{articleData.length > 0 && articleData[0] ? (
+						<TouchableOpacity
+							onPress={() =>
+								navigation.navigate("Article View", {
+									articleData: articleData[0],
+								})
+							}
+						>
+							<ImageBackground
+								source={
+									articleData[0].urlToImage
+										? { uri: articleData[0].urlToImage }
+										: landingImg
+								}
+								style={styles.articleContainer}
+								imageStyle={styles.articleImg}
+								alt="Articles image"
+							>
+								<View style={styles.articleTextContainer}>
+									<Text
+										ellipsizeMode="tail"
+										numberOfLines={2}
+										style={styles.articleTitle}
+									>
+										{articleData[0].title}
+									</Text>
+									<Text style={styles.articleDate}>
+										{`Date: ${String(
+											new Date(articleData[0].publishedAt).getDate()
+										).padStart(2, "0")}/${String(
+											new Date(articleData[0].publishedAt).getMonth() + 1
+										).padStart(2, "0")}/${String(
+											new Date(articleData[0].publishedAt).getFullYear()
+										).slice(-2)}`}
+									</Text>
+								</View>
+							</ImageBackground>
+						</TouchableOpacity>
+					) : (
+						<Text>Loading...</Text>
+					)}
+				</View>
+			</MainView>
+		</ScrollView>
 	);
 };
 
@@ -263,14 +274,13 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		backgroundColor: color.secondaryAlt,
 		width: "100%",
-		height: "35%",
 		padding: 5,
 	},
 
 	articleTitle: {
 		fontFamily: font.fontFamily,
 		fontWeight: "bold",
-		fontSize: 16,
+		fontSize: 14,
 		textTransform: "none",
 		color: color.white,
 	},
@@ -282,6 +292,7 @@ const styles = StyleSheet.create({
 		textTransform: "none",
 		color: color.white,
 		textAlign: "left",
-		marginTop: "auto",
+		marginTop: 5,
+		marginBottom: 5,
 	},
 });

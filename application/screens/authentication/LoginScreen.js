@@ -58,7 +58,15 @@ const LoginScreen = ({ navigation }) => {
 			<KeyboardAvoidingView behavior="position">
 				<Image
 					source={require("../../assets/images/landing.png")}
-					style={styles.landingImg}
+					style={[
+						styles.landingImg,
+						{
+							height:
+								Dimensions.get("screen").height < 800
+									? 0
+									: Dimensions.get("window").height * 0.35,
+						},
+					]}
 					resizeMode="cover"
 				/>
 
@@ -129,7 +137,6 @@ const styles = StyleSheet.create({
 	},
 	landingImg: {
 		width: Dimensions.get("window").width,
-		height: Dimensions.get("window").height * 0.35,
 		transform: [{ translateY: -Dimensions.get("window").height * 0.05 }],
 	},
 	headerText: {
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
 		fontWeight: Platform.OS === "ios" ? "300" : "light",
 		color: color.primary,
 		textAlign: "center",
-		padding: 20,
+		padding: 5,
 		textTransform: "uppercase",
 	},
 

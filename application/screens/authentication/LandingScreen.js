@@ -72,11 +72,10 @@ const styles = StyleSheet.create({
 		fontWeight: Platform.OS === "ios" ? "300" : "light",
 		color: color.primary,
 		textAlign: "center",
-		padding: 20,
+		paddingVertical: 20,
 		textTransform: "uppercase",
 	},
 	btnContainer: {
-		marginVertical: 20,
 		gap: 10,
 	},
 	landingImg: {
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
 	},
 	textContainer: {
 		marginTop: "auto",
-		marginBottom: 40,
+		marginBottom: 20,
 	},
 	policyContainer: {
 		display: "flex",

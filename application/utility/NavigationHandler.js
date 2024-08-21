@@ -13,7 +13,10 @@ import HomeScreen from "../screens/application-stack/HomeScreen";
 import { EcoTipsStack } from "../screens/application-stack/EcoTipsScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import TrackerScreen from "../screens/application-stack/TrackerScreen";
-import ChallengeScreen from "../screens/application-stack/ChallengeScreen";
+import {
+	ChallengeScreen,
+	ChallengeOverviewScreen,
+} from "../screens/application-stack/ChallengeScreen";
 import SettingsScreen from "../screens/account-settings/SettingsScreen";
 import SettingsDetails from "../screens/account-settings/SettingsDetails";
 import ProductScreen from "../screens/application-stack/ProductScreen";
@@ -258,6 +261,15 @@ export const AppStack = () => {
 			<Drawer.Screen
 				name="Article View"
 				component={ArticleViewScreen}
+				options={{
+					drawerItemStyle: {
+						height: 0,
+					},
+				}}
+			/>
+			<Drawer.Screen
+				name="Challenge Overview"
+				component={ChallengeOverviewScreen}
 				options={{
 					drawerItemStyle: {
 						height: 0,
