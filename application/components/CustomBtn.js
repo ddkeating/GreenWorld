@@ -27,7 +27,7 @@ const CustomBtn = ({ title, color, textColor, onPress }) => {
 			<Text
 				style={{
 					color: textColor,
-					fontSize: 32,
+					fontSize: Dimensions.get("window").width * 0.08,
 					fontFamily: font.fontFamily,
 					fontWeight: Platform.OS === "ios" ? "600" : "bold",
 				}}

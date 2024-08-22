@@ -7,6 +7,7 @@ import {
 	Dimensions,
 	TextInput,
 	TouchableOpacity,
+	ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -78,11 +79,11 @@ const RegisterScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
 			<KeyboardAvoidingView
 				behavior="position"
 				style={styles.avoidingViewContainer}
-				// keyboardVerticalOffset={Dimensions.get("screen").height * 0.12}
+				keyboardVerticalOffset={Dimensions.get("screen").height * -0.11}
 			>
 				<Text style={styles.headerText}>Greenworld</Text>
 
@@ -186,7 +187,7 @@ const RegisterScreen = ({ navigation }) => {
 				</View>
 			</KeyboardAvoidingView>
 			<LoadingOverlay isLoading={loading} />
-		</View>
+		</ScrollView>
 	);
 };
 
@@ -268,6 +269,6 @@ const styles = StyleSheet.create({
 	},
 
 	btnContainer: {
-		marginTop: Dimensions.get("screen").height * 0.05,
+		marginVertical: Dimensions.get("screen").height * 0.05,
 	},
 });
