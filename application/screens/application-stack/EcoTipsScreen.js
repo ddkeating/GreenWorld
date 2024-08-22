@@ -114,7 +114,6 @@ const TransportationTips = ({navigation}) => {
 				</View>
 				
 		</ScrollView>
-			
 		</MainView>
 	);
 };
@@ -167,6 +166,34 @@ const LifestyleTips = ({navigation}) => {
 		<NavigationBackBtn navigation={navigation} color={color.primary}/>
 		<Text style={styles.headerText}>Life Style Tips</Text>
 		</View>
+		<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Reduce, Reuse, Recycle:</Text>
+					<Text style={styles.paragraph}>
+					
+					Focus on reducing waste, reusing items whenever possible, and recycling materials. Avoid single-use plastics and opt for reusable alternatives.
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Use Eco-Friendly Cleaning Products:</Text>
+					<Text style={styles.paragraph}>
+					
+					Choose cleaning products that are biodegradable and free from harmful chemicals.
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Educate and Advocate: </Text>
+					<Text style={styles.paragraph}>
+					
+					Stay informed about environmental issues and advocate for sustainable practices within your community.
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Choose Sustainable Products: </Text>
+					<Text style={styles.paragraph}>
+					
+					Support brands and products that prioritize sustainability, such as those made from recycled materials or produced with minimal environmental impact.
+					</Text>
+				</View>
 		</ScrollView>
 		</MainView>
 	);
@@ -180,6 +207,29 @@ const DietaryTips = ({navigation}) => {
 		<NavigationBackBtn navigation={navigation} color={color.primary}/>
 		<Text style={styles.headerText}>Dietary Tips</Text>
 		</View>
+		<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Choose Local and Seasonal Produce: </Text>
+					<Text style={styles.paragraph}>
+					
+					Buy fruits and vegetables that are in season and grown locally. This reduces the need for long-distance transportation and supports local farmers.
+
+
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Eat More Plant-Based Foods:  </Text>
+					<Text style={styles.paragraph}>
+					
+					Incorporate more fruits, vegetables, legumes, nuts, and grains into your diet. Plant-based foods typically have a lower carbon footprint compared to meat and dairy products.
+					</Text>
+				</View>
+				<View style={styles.section}>
+					<Text style={styles.sectionHeader}>Drink Tap Water:   </Text>
+					<Text style={styles.paragraph}>
+					
+					Instead of buying bottled water, use a reusable water bottle and drink tap water or filtered water. This reduces plastic waste and energy used in bottling and transportation.
+					</Text>
+				</View>
 		</ScrollView>
 		</MainView>
 	);
