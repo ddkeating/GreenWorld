@@ -3,7 +3,13 @@ import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import font from "../config/font";
 
-const CustomBtn = ({ title, color, textColor, onPress }) => {
+const CustomBtn = ({
+	title,
+	color,
+	textColor,
+	onPress,
+	fontSize = Dimensions.get("window").width * 0.08,
+}) => {
 	return (
 		<TouchableOpacity
 			style={{
@@ -27,9 +33,9 @@ const CustomBtn = ({ title, color, textColor, onPress }) => {
 			<Text
 				style={{
 					color: textColor,
-					fontSize: Dimensions.get("window").width * 0.08,
 					fontFamily: font.fontFamily,
 					fontWeight: Platform.OS === "ios" ? "600" : "bold",
+					fontSize: fontSize,
 				}}
 			>
 				{title}

@@ -17,8 +17,7 @@ import {
 	ChallengeScreen,
 	ChallengeOverviewScreen,
 } from "../screens/application-stack/ChallengeScreen";
-import SettingsScreen from "../screens/account-settings/SettingsScreen";
-import SettingsDetails from "../screens/account-settings/SettingsDetails";
+import SettingsStack from "../screens/account-settings/SettingsScreen";
 import ProductScreen from "../screens/application-stack/ProductScreen";
 import ArticlesScreen, {
 	ArticlesNavigator,
@@ -30,6 +29,7 @@ import LandingScreen from "../screens/authentication/LandingScreen";
 import PasswordReset from "../screens/authentication/PasswordReset";
 import LoginScreen from "../screens/authentication/LoginScreen";
 import RegisterScreen from "../screens/authentication/RegisterScreen";
+import ArticleViewScreen from "../screens/application-stack/ArticleViewScreen";
 
 // Config
 import color from "../config/color";
@@ -37,7 +37,6 @@ import font from "../config/font";
 import CustomDrawerContent from "../components/CustomDrawerView";
 import NavigationBackBtn from "../components/NavigationBackBtn";
 import { useAuthHook } from "./firebase-modules/UseAuthHook";
-import ArticleViewScreen from "../screens/application-stack/ArticleViewScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -146,20 +145,23 @@ export const AppStack = () => {
 				},
 
 				headerLeft: () => (
-					<Text
-						style={{
-							fontFamily: font.fontFamily,
-							fontSize: 34,
-							color: color.white,
-							textTransform: "uppercase",
-							paddingLeft: 10,
-							width:
-								Dimensions.get("screen").width -
-								Dimensions.get("screen").width * 0.2,
-						}}
-					>
-						Greenworld
-					</Text>
+					<View>
+						<Text
+							style={{
+								fontFamily: font.fontFamily,
+								fontSize: 34,
+								color: color.white,
+								textTransform: "uppercase",
+								paddingLeft: 10,
+								width:
+									Dimensions.get("screen").width -
+									Dimensions.get("screen").width * 0.2,
+							}}
+						>
+							Greenworld
+						</Text>
+						<StatusBar barStyle="light-content" />
+					</View>
 				),
 				headerRight: () => (
 					<TouchableOpacity
@@ -270,6 +272,16 @@ export const AppStack = () => {
 			<Drawer.Screen
 				name="Challenge Overview"
 				component={ChallengeOverviewScreen}
+				options={{
+					drawerItemStyle: {
+						height: 0,
+					},
+				}}
+			/>
+
+			<Drawer.Screen
+				name="Account Settings"
+				component={SettingsStack}
 				options={{
 					drawerItemStyle: {
 						height: 0,

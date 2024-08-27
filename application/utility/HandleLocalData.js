@@ -8,7 +8,7 @@ export const getDailyChallenges = async () => {
 	try {
 		const storedChallenges = await AsyncStorage.getItem(DAILY_CHALLENGES_KEY);
 		const lastUpdate = await AsyncStorage.getItem(LAST_UPDATE_KEY);
-		const today = new Date().toDateString();
+		const today = new Date().toISOString().split("T")[0];
 
 		// Checks if there are stored challenges and if they were updated today.
 		// Daily challenges should refresh every day.
