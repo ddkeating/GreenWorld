@@ -17,6 +17,20 @@ export const fetchArticleData = async () => {
 	}
 };
 
+// Function to fetch the user's progression data and delete it.
+export const deleteUserProgression = async () => {
+	try {
+		const userProgressRef = collection(
+			db,
+			"user-progression",
+			auth.currentUser.uid
+		);
+		await setDoc(userProgressRef, {});
+	} catch (error) {
+		console.error("Error deleting user progression: ", error);
+	}
+};
+
 export const retrieveDailyChallenges = async () => {
 	try {
 		// Reference to the specific document that contains the challenges

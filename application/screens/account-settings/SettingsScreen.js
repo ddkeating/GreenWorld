@@ -26,6 +26,8 @@ import color from "../../config/color";
 import font from "../../config/font";
 import MainView from "../../components/MainView";
 import { auth } from "../../utility/firebase-modules/Firebase";
+import CustomModal from "../../components/CustomModal";
+import { deleteUserProgression } from "../../utility/firebase-modules/DataHandling";
 
 export default SettingsStack = () => {
 	const Stack = createStackNavigator();
@@ -98,9 +100,15 @@ const SettingsScreen = ({ navigation }) => {
 const ProfileDetails = ({ navigation }) => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
+
 	const [error, setError] = useState("");
 	const [successMsg, setSuccessMsg] = useState("");
+
 	const [loading, setLoading] = useState(false);
+
+	const [modalVisible, setModalVisible] = useState(false);
+	const [modalTextEntry, setModalTextEntry] = useState("");
+	const [deletingAccount, setDeletingAccount] = useState(false);
 
 	useEffect(() => {
 		setLoading(true);
@@ -117,92 +125,84 @@ const ProfileDetails = ({ navigation }) => {
 		return re.test(email);
 	};
 
-	const handleReauthentication = async (email, password) => {
-		const credential = EmailAuthProvider.credential(email, password);
-		try {
-			await reauthenticateWithCredential(auth.currentUser, credential);
-		} catch (error) {
-			setError("Reauthentication Failed, please try again.");
-			setLoading(false);
+	const handleConfirm = async () => {
+		setLoading(true);
+		setError("");
+
+		const currentUser = auth.currentUser;
+		if (currentUser) {
+			const credential = EmailAuthProvider.credential(
+				currentUser.email,
+				modalTextEntry // Password entered by the user
+			);
+
+			try {
+				// Reauthenticate the user
+				await reauthenticateWithCredential(currentUser, credential);
+
+				if (deletingAccount) {
+					// Proceed with account deletion and delete user progression.
+					await deleteUserProgression();
+					await currentUser.delete();
+				} else {
+					// Update profile
+					await updateProfile(currentUser, {
+						displayName: name,
+					});
+
+					if (email !== currentUser.email) {
+						await currentUser.updateEmail(email);
+					}
+
+					auth.currentUser.reload().then(() => {
+						setSuccessMsg("Profile updated successfully");
+					});
+				}
+			} catch (error) {
+				setError(
+					"Authentication failed. Please check your password and try again."
+				);
+			}
 		}
+
+		setLoading(false);
+		setModalVisible(false);
+		setDeletingAccount(false); // Reset deletion state
 	};
 
-	const handleDeleteAccount = async () => {
-		if (auth.currentUser) {
-			await auth.currentUser.delete();
-		}
+	const handleModalTextChange = (text) => {
+		setModalTextEntry(text);
 	};
-	const handleUpdateProfile = async () => {
-		setLoading(true);
+
+	const handleDeleteAccount = () => {
+		setError("");
+		setSuccessMsg("");
+		setDeletingAccount(true); // Set state to indicate account deletion
+		setModalVisible(true); // Show the modal to confirm the password
+	};
+
+	const handleUpdateProfile = () => {
 		setError("");
 		setSuccessMsg("");
 
-		// Validate inputs
 		if (!name.trim()) {
 			setError("Please enter a valid name");
-			setLoading(false);
 			return;
 		}
 		if (!email.trim() || !validateEmail(email)) {
 			setError("Please enter a valid email");
-			setLoading(false);
 			return;
 		}
 
-		// If there are no changes to the name or email
 		if (
 			auth.currentUser.email === email &&
 			auth.currentUser.displayName === name
 		) {
 			setError("Please enter a new email or name");
-			setLoading(false);
 			return;
 		}
 
-		try {
-			// Prompt the user for their password
-			Alert.prompt(
-				"Password",
-				"Please enter your password to update the profile",
-				[
-					{
-						text: "Cancel",
-						style: "cancel",
-						onPress: () => setLoading(false), // Stop loading if cancelled
-					},
-					{
-						text: "OK",
-						onPress: async (password) => {
-							// Attempt reauthentication
-							const reauthSuccess = await handleReauthAndUpdate(password);
-							if (reauthSuccess) {
-								// If reauthentication is successful, proceed with the update
-								await updateProfile(auth.currentUser, {
-									displayName: name,
-									email: email,
-								});
-								setSuccessMsg("Profile updated successfully.");
-							}
-							setLoading(false);
-						},
-					},
-				]
-			);
-		} catch (error) {
-			console.log(error);
-			setLoading(false);
-		}
-	};
-
-	// Separate function for reauthentication and update
-	const handleReauthAndUpdate = async (password) => {
-		try {
-			await handleReauthentication(auth.currentUser.email, password);
-			return true; // Reauthentication successful
-		} catch (error) {
-			setError("Reauthentication failed. Please enter the correct password.");
-			return false; // Reauthentication failed
-		}
+		setModalVisible(true); // Show the modal to confirm the password
 	};
 
 	return (
@@ -281,6 +281,14 @@ const ProfileDetails = ({ navigation }) => {
 					</View>
 				</View>
 				<LoadingOverlay isLoading={loading} />
+				<CustomModal
+					text="Please enter your password to confirm"
+					textPlaceholder="Password"
+					modalVisible={modalVisible}
+					setModalVisible={setModalVisible}
+					onTextChange={handleModalTextChange}
+					onConfirm={handleConfirm}
+				/>
 			</MainView>
 		</ScrollView>
 	);
