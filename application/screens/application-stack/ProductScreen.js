@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, Image, TextInput } from "react-native";
-import MainView from "../../components/MainView";  // Ensure the path is correct
-import { fetchProducts } from "../../services/etsyApi";  // Import the service file
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TextInput,
+} from "react-native";
+import MainView from "../../components/MainView"; // Ensure the path is correct
+import { fetchProducts } from "../../services/fetchProducts"; // Update the path
 
 const ProductScreen = () => {
   const [products, setProducts] = useState([]);
@@ -31,23 +38,18 @@ const ProductScreen = () => {
       {/* Product List */}
       <FlatList
         data={products}
-        keyExtractor={(item) => item.listing_id.toString()}
+        keyExtractor={(item, index) => index.toString()} // Use index or a unique field
         renderItem={({ item }) => (
           <View style={styles.productItem}>
             {/* Product Image */}
-            <Image
-              source={{ uri: item.Images[0]?.url_170x135 }}
-              style={styles.productImage}
-            />
+            <Image source={{ uri: item.image }} style={styles.productImage} />
             <View style={styles.productDetails}>
               {/* Product Title */}
               <Text style={styles.productTitle}>{item.title}</Text>
               {/* Product Description */}
               <Text style={styles.productDescription}>{item.description}</Text>
               {/* Product Price */}
-              <Text style={styles.productPrice}>
-                {item.price} {item.currency_code}
-              </Text>
+              <Text style={styles.productPrice}>${item.price}</Text>
             </View>
           </View>
         )}
