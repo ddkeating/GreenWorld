@@ -1,32 +1,38 @@
 // services/fetchProducts.js
-
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../utility/firebase-modules/Firebase";
 
 export const fetchProducts = async (queryText) => {
-	try {
-		// Reference to the Firestore collection
-		const productsCollection = collection(db, "products");
+  try {
+    // Reference to the Firestore collection
+    const productsCollection = collection(db, "products");
 
-		// Example: query for products where title contains the search query
-		const q = query(
-			productsCollection,
-			where("title", ">=", queryText),
-			where("title", "<=", queryText + "\uf8ff") // To perform a range search
-		);
+    let productsQuery;
 
-		// Get documents from the query
-		const snapshot = await getDocs(q);
+    if (queryText) {
+      // Query for products where title contains the search query
+      productsQuery = query(
+        productsCollection,
+        where("title", ">=", queryText),
+        where("title", "<=", queryText + "\uf8ff") // To perform a range search
+      );
+    } else {
+      // No queryText, return all products
+      productsQuery = productsCollection;
+    }
 
-		// Map over documents to extract data
-		const productsList = snapshot.docs.map((doc) => ({
-			id: doc.id,
-			...doc.data(),
-		}));
+    // Get documents from the query
+    const snapshot = await getDocs(productsQuery);
 
-		return productsList;
-	} catch (error) {
-		console.error("Error fetching products: ", error);
-		return [];
-	}
+    // Map over documents to extract data
+    const productsList = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return productsList;
+  } catch (error) {
+    console.error("Error fetching products: ", error);
+    return [];
+  }
 };
