@@ -1,8 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import MainView from "../../components/MainView"; // Ensure the path is correct
+import MainView from "../../components/MainView";
+import NavigationBackBtn from "../../components/NavigationBackBtn";
 
-const ArticleViewScreen = ({ route }) => {
+const ArticleViewScreen = ({ route, navigation }) => {
   const { articleData } = route.params;
 
   console.log("Article Data:", articleData); // Debugging line
@@ -14,6 +15,9 @@ const ArticleViewScreen = ({ route }) => {
   return (
     <MainView>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <NavigationBackBtn navigation={navigation} />
+        </View>
         <Image source={{ uri: articleData.imageUrl }} style={styles.image} />
         <Text style={styles.title}>{articleData.title}</Text>
         <Text style={styles.content}>{articleData.content}</Text>
@@ -25,6 +29,9 @@ const ArticleViewScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+  },
+  header: {
+    marginBottom: 20, // Adjust as needed to ensure space for the back button
   },
   image: {
     width: "100%",

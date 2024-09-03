@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../utility/firebase-modules/Firebase";
 import MainView from "../../components/MainView"; // Adjust the path accordingly
@@ -11,12 +18,19 @@ const ArticlesScreen = ({ navigation }) => {
     const fetchArticles = async () => {
       const articlesCollection = collection(db, "ecoArticles");
       const articleSnapshot = await getDocs(articlesCollection);
-      const articleList = articleSnapshot.docs.map((doc) => doc.data());
+      const articleList = articleSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setArticles(articleList);
     };
 
     fetchArticles();
-  }, []);
+  }, [db]);
+
+  const handleArticlePress = (article) => {
+    navigation.navigate("Article View", { articleData: article });
+  };
 
   return (
     <MainView>
@@ -24,14 +38,16 @@ const ArticlesScreen = ({ navigation }) => {
         data={articles}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.articleItem}>
-            <Image
-              source={{ uri: item.imageUrl }}
-              style={styles.articleImage}
-            />
-            <Text style={styles.articleTitle}>{item.title}</Text>
-            <Text style={styles.articleSummary}>{item.summary}</Text>
-          </View>
+          <TouchableOpacity onPress={() => handleArticlePress(item)}>
+            <View style={styles.articleItem}>
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.articleImage}
+              />
+              <Text style={styles.articleTitle}>{item.title}</Text>
+              <Text style={styles.articleSummary}>{item.summary}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
     </MainView>
