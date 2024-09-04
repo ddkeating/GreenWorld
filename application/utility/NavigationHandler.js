@@ -22,6 +22,7 @@ import SettingsDetails from "../screens/account-settings/SettingsDetails";
 import ProductScreen from "../screens/application-stack/ProductScreen";
 import ArticlesScreen, {
 	ArticlesNavigator,
+	ArticleStack,
 } from "../screens/application-stack/ArticlesScreen";
 import ProfileScreen from "../screens/application-stack/ProfileScreen";
 import PrivacyPolicy from "../screens/policies/PrivacyPolicy";
@@ -198,7 +199,7 @@ export const AppStack = () => {
 			/>
 			<Drawer.Screen
 				name="Articles"
-				component={ArticlesScreen}
+				component={ArticleStack}
 				options={{
 					drawerIcon: () => (
 						<Icon name="newspaper" size={40} color={color.white} />
@@ -252,15 +253,6 @@ export const AppStack = () => {
 			<Drawer.Screen
 				name="Terms Of Service"
 				component={TermsOfService}
-				options={{
-					drawerItemStyle: {
-						height: 0,
-					},
-				}}
-			/>
-			<Drawer.Screen
-				name="Article View"
-				component={ArticleViewScreen}
 				options={{
 					drawerItemStyle: {
 						height: 0,
