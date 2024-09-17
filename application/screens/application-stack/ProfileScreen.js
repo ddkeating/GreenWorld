@@ -1,21 +1,47 @@
 import { ScrollView, StyleSheet, Text, Touchable, View } from "react-native";
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { fetchMonthlyCarbonFootprintData } from "../../utility/firebase-modules/DataHandling";
 import { auth } from "../../utility/firebase-modules/Firebase";
 import { signOut } from "firebase/auth";
 import CustomBtn from "../../components/CustomBtn";
 import color from "../../config/color";
 import font from "../../config/font";
 import CarouselComponent from "../../components/Carousel";
+import LoadingOverlay from "../../components/Loading";
 
-const carouselItems = [
-	{
-		title: "Carbon Footprint Tracker",
-		route: "Tracker",
-	},
-];
+const formatMonthYear = (month, year) => {
+	// Create a date object with the given month and year
+	const date = new Date(month); // month is 0-indexed in JavaScript Date
+	// Format the date as "Feb 2024"
+	const options = { month: "short", year: "numeric" };
+	return date.toLocaleDateString("en-US", options);
+};
 
 const ProfileScreen = ({ navigation }) => {
+	const [carouselItems, setCarouselItems] = useState([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchCarbonData = async () => {
+			try {
+				setLoading(true);
+				const monthlyData = await fetchMonthlyCarbonFootprintData();
+				// Format the data for the carousel
+				const formattedData = monthlyData.map((data) => ({
+					title: formatMonthYear(data.month),
+					description: data.totalCarbonFootprint,
+				}));
+				setCarouselItems(formattedData);
+			} catch (error) {
+				console.error("Error fetching monthly carbon data: ", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchCarbonData();
+	}, []);
+
 	return (
 		<ScrollView>
 			<MainView>
@@ -28,7 +54,7 @@ const ProfileScreen = ({ navigation }) => {
 					<Text style={styles.carouselHeaderText}>
 						Carbon Footprint Overview
 					</Text>
-					<CarouselComponent content={carouselItems} navigation={navigation} />
+					<CarouselComponent content={carouselItems} />
 				</View>
 
 				<View style={styles.btnContainer}>
@@ -39,6 +65,7 @@ const ProfileScreen = ({ navigation }) => {
 						textColor={color.white}
 					/>
 				</View>
+				<LoadingOverlay isLoading={loading} />
 			</MainView>
 		</ScrollView>
 	);

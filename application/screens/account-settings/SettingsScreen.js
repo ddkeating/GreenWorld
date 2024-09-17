@@ -5,7 +5,7 @@ import {
 	TextInput,
 	View,
 	TouchableOpacity,
-	Alert,
+	Switch,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,21 +14,27 @@ import {
 	EmailAuthProvider,
 	reauthenticateWithCredential,
 	updateProfile,
+	updateEmail,
 } from "firebase/auth";
 
 // Components Import
 import NavigationBackBtn from "../../components/NavigationBackBtn";
 import CustomBtn from "../../components/CustomBtn";
 import LoadingOverlay from "../../components/Loading";
+import CustomModal from "../../components/CustomModal";
+import MainView from "../../components/MainView";
 
 // Config Imports
 import color from "../../config/color";
 import font from "../../config/font";
-import MainView from "../../components/MainView";
 import { auth } from "../../utility/firebase-modules/Firebase";
-import CustomModal from "../../components/CustomModal";
-import { deleteUserProgression } from "../../utility/firebase-modules/DataHandling";
+import {
+	getUserSettings,
+	handleUserSettings,
+} from "../../utility/firebase-modules/DataHandling";
+import PasswordChangeScreen from "./PasswordChangeScreen";
 
+// Navigation stack to handle settings navigation.
 export default SettingsStack = () => {
 	const Stack = createStackNavigator();
 	return (
@@ -42,6 +48,7 @@ export default SettingsStack = () => {
 				name="Notification Settings"
 				component={NotificationSettings}
 			/>
+			<Stack.Screen name="Change Password" component={PasswordChangeScreen} />
 		</Stack.Navigator>
 	);
 };
@@ -68,7 +75,10 @@ const SettingsScreen = ({ navigation }) => {
 							style={styles.arrowRight}
 						/>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.settingsItem}>
+					<TouchableOpacity
+						style={styles.settingsItem}
+						onPress={() => navigation.navigate("Notification Settings")}
+					>
 						<Icon name="bell" size={32} color={color.primary} />
 						<Text style={styles.settingsText}>Notifications</Text>
 						<Icon
@@ -98,6 +108,7 @@ const SettingsScreen = ({ navigation }) => {
 };
 
 const ProfileDetails = ({ navigation }) => {
+	// State Variables
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 
@@ -108,29 +119,40 @@ const ProfileDetails = ({ navigation }) => {
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [modalTextEntry, setModalTextEntry] = useState("");
+
 	const [deletingAccount, setDeletingAccount] = useState(false);
 
+	// On Component Mount Effect Hook to fetch user details
 	useEffect(() => {
-		setLoading(true);
-		const currentUser = auth.currentUser;
-		if (currentUser) {
-			setName(currentUser.displayName);
-			setEmail(currentUser.email);
-		}
-		setLoading(false);
+		const loadUserDetails = async () => {
+			setLoading(true);
+			const currentUser = auth.currentUser;
+			if (currentUser) {
+				setName(currentUser.displayName || "");
+				setEmail(currentUser.email || "");
+			}
+			setLoading(false);
+		};
+
+		loadUserDetails();
 	}, []);
 
+	// Function to validate email
 	const validateEmail = (email) => {
 		const re = /\S+@\S+\.\S+/;
 		return re.test(email);
 	};
 
+	// Function to handle the confirmation of the modal
 	const handleConfirm = async () => {
 		setLoading(true);
 		setError("");
+		setSuccessMsg("");
 
+		// If user is logged in.
 		const currentUser = auth.currentUser;
 		if (currentUser) {
+			// Create a credential with the email and password entered by the user
 			const credential = EmailAuthProvider.credential(
 				currentUser.email,
 				modalTextEntry // Password entered by the user
@@ -140,9 +162,10 @@ const ProfileDetails = ({ navigation }) => {
 				// Reauthenticate the user
 				await reauthenticateWithCredential(currentUser, credential);
 
+				// If the user is deleting the account
 				if (deletingAccount) {
-					// Proceed with account deletion and delete user progression.
-					await deleteUserProgression();
+					// Proceed with account deletion.
+					// INTENDED TO DELETE USER PROGRESSION DURING THIS FUNCTION HOWEVER IT REQUIRES A BETTER UNDERSTANDING OF FIRESTORE API AND RECURSIVE DELETION OF USER DATA.
 					await currentUser.delete();
 				} else {
 					// Update profile
@@ -150,10 +173,12 @@ const ProfileDetails = ({ navigation }) => {
 						displayName: name,
 					});
 
+					// If the email has been changed, update the email
 					if (email !== currentUser.email) {
-						await currentUser.updateEmail(email);
+						await updateEmail(currentUser, email);
 					}
 
+					// Reload the user to get the updated details
 					auth.currentUser.reload().then(() => {
 						setSuccessMsg("Profile updated successfully");
 					});
@@ -170,21 +195,20 @@ const ProfileDetails = ({ navigation }) => {
 		setDeletingAccount(false); // Reset deletion state
 	};
 
+	// Function to handle the change in the modal text
 	const handleModalTextChange = (text) => {
 		setModalTextEntry(text);
 	};
 
+	// Function to handle the deletion of the account
 	const handleDeleteAccount = () => {
-		setError("");
-		setSuccessMsg("");
 		setDeletingAccount(true); // Set state to indicate account deletion
 		setModalVisible(true); // Show the modal to confirm the password
 	};
 
+	// Error handling function for updating profile.
 	const handleUpdateProfile = () => {
-		setError("");
-		setSuccessMsg("");
-
+		// If name or email is empty, show error or email is not valid, show error.
 		if (!name.trim()) {
 			setError("Please enter a valid name");
 			return;
@@ -194,6 +218,7 @@ const ProfileDetails = ({ navigation }) => {
 			return;
 		}
 
+		// If the email and name are the same as the current user's email and name, show error.
 		if (
 			auth.currentUser.email === email &&
 			auth.currentUser.displayName === name
@@ -253,8 +278,8 @@ const ProfileDetails = ({ navigation }) => {
 
 				<View style={styles.updateBtnContainer}>
 					<CustomBtn
-						color={color.primary}
-						textColor={color.white}
+						color={color.accent}
+						textColor={color.black}
 						title="Update Profile"
 						onPress={handleUpdateProfile}
 					/>
@@ -294,11 +319,51 @@ const ProfileDetails = ({ navigation }) => {
 	);
 };
 
-const NotificationSettings = () => {
+const NotificationSettings = ({ navigation }) => {
+	const [pushNotifications, setPushNotifications] = useState(true);
+
+	useEffect(() => {
+		// Fetch the user's notification settings
+		const fetchUserSettings = async () => {
+			const userSettings = await getUserSettings();
+			if (userSettings) {
+				setPushNotifications(userSettings.pushNotifications);
+			}
+		};
+		fetchUserSettings();
+	}, []);
+
+	const handleUpdateSettings = async (boolean) => {
+		setPushNotifications(boolean);
+		const settings = {
+			pushNotifications: boolean,
+		};
+		await handleUserSettings(settings);
+	};
+
 	return (
-		<View>
-			<Text>NotificationSettings</Text>
-		</View>
+		<ScrollView>
+			<MainView>
+				<View style={styles.headerContainer}>
+					<NavigationBackBtn navigation={navigation} color={color.primary} />
+					<Text style={styles.headerText}>Notifications</Text>
+				</View>
+				<View style={styles.notificationSettingsList}>
+					<View style={styles.NotificationSettingsItem}>
+						<Text style={styles.notificationSettingsText}>
+							Push Notifications
+						</Text>
+						<Switch
+							value={pushNotifications}
+							onValueChange={(value) => handleUpdateSettings(value)}
+							style={styles.arrowRight}
+							trackColor={{ true: color.secondary }}
+							ios_backgroundColor={color.black}
+						/>
+					</View>
+				</View>
+			</MainView>
+		</ScrollView>
 	);
 };
 
@@ -387,5 +452,24 @@ const styles = StyleSheet.create({
 
 	changePasswordBtn: {
 		marginBottom: 20,
+	},
+
+	notificationSettingsList: {
+		marginVertical: 10,
+		flexDirection: "column",
+	},
+
+	NotificationSettingsItem: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginVertical: 10,
+	},
+
+	notificationSettingsText: {
+		fontSize: 24,
+		color: color.primary,
+		fontFamily: font.fontFamily,
+		fontWeight: "bold",
+		marginLeft: 10,
 	},
 });

@@ -12,7 +12,7 @@ import Carousel from "react-native-reanimated-carousel";
 import color from "../config/color";
 import font from "../config/font";
 
-const CarouselComponent = ({ content, navigation }) => {
+const CarouselComponent = ({ content, navigation = null }) => {
 	// State Variables
 	const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -45,12 +45,35 @@ const CarouselComponent = ({ content, navigation }) => {
 					scrollAnimationDuration={500}
 					renderItem={({ index }) => (
 						<TouchableOpacity
-							onPress={() => navigation.navigate(content[index].route)}
+							onPress={
+								!navigation
+									? null
+									: () => navigation.navigate(content[index].route)
+							}
 						>
 							<View style={styles.carouselItemContainer}>
-								<Text style={styles.carouselItemText}>
-									{content[index].title}
-								</Text>
+								<View style={styles.textContainer}>
+									<Text style={styles.carouselItemText}>
+										{content[index].title}
+									</Text>
+									{content[index].description && (
+										<Text
+											style={[
+												styles.carouselItemText,
+												{
+													color:
+														content[index].description < 10
+															? color.secondary
+															: color.red,
+													fontSize: 24,
+													fontWeight: "bold",
+												},
+											]}
+										>
+											{content[index].description} Metric Tons
+										</Text>
+									)}
+								</View>
 							</View>
 						</TouchableOpacity>
 					)}
@@ -109,6 +132,9 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		color: color.secondary,
 		maxWidth: "80%",
+	},
+
+	textContainer: {
 		marginVertical: "auto",
 	},
 
