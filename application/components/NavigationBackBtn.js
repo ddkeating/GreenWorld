@@ -3,6 +3,8 @@ import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import color from "../config/color";
+
 // Navigation Back Button Component for React Navigation Stack.
 const NavigationBackBtn = ({ navigation, color = "#fff" }) => {
 	return (
