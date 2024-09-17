@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { Animated, Dimensions, Easing, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import color from "../config/color";
 
@@ -66,9 +66,9 @@ export default LoadingOverlay;
 const styles = StyleSheet.create({
 	loadingContainer: {
 		position: "absolute",
-		zIndex: 1,
+		zIndex: 999,
 		backgroundColor: "rgba(255, 255, 255, 0.5)",
-		width: "100%",
+		width: Dimensions.get("window").width,
 		height: "100%",
 		justifyContent: "center",
 		alignItems: "center",

@@ -1,4 +1,3 @@
-// Module Imports
 import {
 	StyleSheet,
 	Text,
@@ -18,7 +17,10 @@ import CustomBtn from "../../components/CustomBtn";
 import LoadingOverlay from "../../components/Loading";
 
 // Authentication Imports
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+	signInWithEmailAndPassword,
+	sendPasswordResetEmail,
+} from "firebase/auth";
 import { auth } from "../../utility/firebase-modules/Firebase";
 
 // Config Imports
@@ -35,8 +37,9 @@ const LoginScreen = ({ navigation }) => {
 	// State Variables for Error Handling and Loading Overlay
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [resetEmailSent, setResetEmailSent] = useState(false);
 
-	// Function to handle user login via Firebase Auth API.
+	// Function to handle user login via Firebase Auth API
 	const handleLogin = async () => {
 		if (!email || !password) {
 			setError("Please fill in all fields");
@@ -47,6 +50,24 @@ const LoginScreen = ({ navigation }) => {
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
+		} catch (error) {
+			setError(FirebaseErrorHandling(error));
+		}
+		setLoading(false);
+	};
+
+	// Function to handle password reset via Firebase Auth API
+	const handlePasswordReset = async () => {
+		if (!email) {
+			setError("Please enter your email address");
+			return;
+		}
+		setError("");
+		setLoading(true);
+
+		try {
+			await sendPasswordResetEmail(auth, email);
+			setResetEmailSent(true);
 		} catch (error) {
 			setError(FirebaseErrorHandling(error));
 		}
@@ -103,14 +124,17 @@ const LoginScreen = ({ navigation }) => {
 							/>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity
-						onPress={() => navigation.navigate("Password Reset")}
-					>
+					<TouchableOpacity onPress={handlePasswordReset}>
 						<Text style={styles.passwordForgetText}>Forgot your password</Text>
 					</TouchableOpacity>
 					{error ? (
 						<Text style={{ color: color.red, textAlign: "center" }}>
 							{error}
+						</Text>
+					) : null}
+					{resetEmailSent ? (
+						<Text style={{ color: color.green, textAlign: "center" }}>
+							Password reset email sent! Check your inbox.
 						</Text>
 					) : null}
 					<View style={styles.btnContainer}>
@@ -149,7 +173,6 @@ const styles = StyleSheet.create({
 		padding: 5,
 		textTransform: "uppercase",
 	},
-
 	inputContainer: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -162,7 +185,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 5,
 	},
-
 	input: {
 		fontSize: 24,
 		fontFamily: font.fontFamily,
@@ -170,14 +192,12 @@ const styles = StyleSheet.create({
 		width: "80%",
 		flexGrow: 1,
 	},
-
 	inputLabel: {
 		fontSize: 24,
 		fontFamily: font.fontFamily,
 		color: color.primary,
 		marginHorizontal: 20,
 	},
-
 	passwordForgetText: {
 		fontSize: 16,
 		fontFamily: font.fontFamily,
@@ -186,7 +206,6 @@ const styles = StyleSheet.create({
 		marginHorizontal: 20,
 		marginBottom: 5,
 	},
-
 	btnContainer: {
 		marginVertical: 20,
 	},

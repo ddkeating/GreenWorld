@@ -26,8 +26,9 @@ import {
 	fetchUserCompletedChallenges,
 	updateUserCompletedChallenges,
 } from "../../utility/firebase-modules/DataHandling";
+import NavigationBackBtn from "../../components/NavigationBackBtn";
 
-export const ChallengeOverviewScreen = () => {
+export const ChallengeOverviewScreen = ({ navigation }) => {
 	const [challenges, setChallenges] = useState([]);
 	const [totalChallenges, setTotalChallenges] = useState(0);
 	const [loading, setLoading] = useState(true);
@@ -65,7 +66,10 @@ export const ChallengeOverviewScreen = () => {
 	return (
 		<ScrollView>
 			<MainView>
-				<Text style={styles.header}>Daily Challenges Overview</Text>
+				<View style={styles.headerContainer}>
+					<NavigationBackBtn navigation={navigation} color={color.primary} />
+					<Text style={styles.header}>Daily Challenges Overview</Text>
+				</View>
 				<Text style={styles.challengesCompletedText}>
 					Challenges Completed: {totalChallenges > 0 ? totalChallenges : 0}
 				</Text>
@@ -275,13 +279,18 @@ export const ChallengeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+	headerContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
 	header: {
-		fontSize: 24,
+		fontSize: 22,
 		fontWeight: "bold",
 		fontFamily: font.fontFamily,
 		color: color.primary,
 		marginVertical: 20,
 		textAlign: "center",
+		flexGrow: 1,
 	},
 
 	challengesListView: {

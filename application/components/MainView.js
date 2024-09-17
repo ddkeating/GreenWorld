@@ -1,5 +1,11 @@
 // Component for handling a consistent background image and overlay for the application stack.
-import { View, StyleSheet, ImageBackground, ScrollView } from "react-native";
+import {
+	View,
+	StyleSheet,
+	ImageBackground,
+	ScrollView,
+	Dimensions,
+} from "react-native";
 
 import backgroundImg from "../assets/images/background.png";
 import font from "../config/font";
@@ -15,7 +21,8 @@ export default MainView = ({ children }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		minHeight: "100%",
+		minHeight:
+			Dimensions.get("screen").height - Dimensions.get("screen").height * 0.11,
 	},
 	overlay: {
 		flex: 1,

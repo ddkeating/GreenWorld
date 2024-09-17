@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import Carousel from "react-native-reanimated-carousel";
+import CarouselComponent from "../../components/Carousel";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -23,11 +23,6 @@ import { fetchArticleData } from "../../utility/firebase-modules/DataHandling";
 import landingImg from "../../assets/images/landing.png";
 
 const HomeScreen = ({ navigation }) => {
-	// State Variables
-	const [currentIndex, setCurrentIndex] = useState(0);
-	// Carousel Ref variable for handling the carousel component.
-	const carouselRef = useRef(null);
-
 	const [articleData, setArticleData] = useState([]);
 
 	useEffect(() => {
@@ -39,14 +34,6 @@ const HomeScreen = ({ navigation }) => {
 	}, []);
 
 	// Function for handling the pagination of the carousel component.
-	const handlePagination = (index) => {
-		if (carouselRef.current) {
-			carouselRef.current.scrollTo({
-				index,
-				animated: true,
-			});
-		}
-	};
 
 	// Carousel Items and their respective routes.
 	const carouselItems = [
@@ -79,47 +66,7 @@ const HomeScreen = ({ navigation }) => {
 						? "Welcome Back " + auth.currentUser.displayName
 						: "Welcome to Greenworld"}
 				</Text>
-
-				<View style={styles.carouselContainer}>
-					<Carousel
-						loop={false}
-						/* OnProgress change to update the index in realtime and therefore updating the pagination index. */
-						onProgressChange={(_, progress) => {
-							setCurrentIndex(Math.round(progress));
-						}}
-						ref={carouselRef}
-						width={Dimensions.get("window").width}
-						height={Dimensions.get("window").width}
-						autoPlay={false}
-						data={carouselItems}
-						scrollAnimationDuration={500}
-						renderItem={({ index }) => (
-							<View style={styles.carouselItemContainer}>
-								<Text style={styles.carouselItemText}>
-									{carouselItems[index].title}
-								</Text>
-							</View>
-						)}
-					/>
-				</View>
-				<View style={styles.paginationContainer}>
-					{carouselItems.map((_, index) => (
-						<TouchableOpacity
-							key={index}
-							onPress={() => handlePagination(index)}
-						>
-							<View
-								style={[
-									styles.paginationButtons,
-									{
-										backgroundColor:
-											index === currentIndex ? color.secondary : color.primary,
-									},
-								]}
-							></View>
-						</TouchableOpacity>
-					))}
-				</View>
+				<CarouselComponent content={carouselItems} navigation={navigation} />
 				<View style={styles.articleSection}>
 					<TouchableOpacity
 						style={styles.latestArticlesBtn}
@@ -186,54 +133,6 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		textAlign: "center",
 		flexWrap: "wrap",
-	},
-
-	carouselContainer: {
-		width: "100%",
-		alignItems: "center",
-		marginTop: 20,
-		marginBottom: 10,
-		height: Dimensions.get("window").width * 0.75,
-	},
-
-	carouselItemContainer: {
-		borderWidth: 10,
-		borderColor: color.secondary,
-		backgroundColor: "#ffffffa2",
-		borderRadius: 9999,
-		alignSelf: "center",
-		alignItems: "center",
-		width: Dimensions.get("window").width * 0.7,
-		height: Dimensions.get("window").width * 0.7,
-		shadowOffset: { width: 0, height: 2 },
-		shadowColor: color.black,
-		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
-		elevation: 5,
-	},
-
-	carouselItemText: {
-		fontSize: 36,
-		fontFamily: font.fontFamily,
-		fontWeight: "light",
-		textAlign: "center",
-		color: color.secondary,
-		maxWidth: "80%",
-		marginVertical: "auto",
-	},
-
-	paginationContainer: {
-		flexDirection: "row",
-		width: "100%",
-		justifyContent: "center",
-	},
-
-	paginationButtons: {
-		width: 15,
-		height: 15,
-		borderRadius: 9999,
-		backgroundColor: color.secondary,
-		marginHorizontal: 8,
 	},
 
 	articleSection: {
