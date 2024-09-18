@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import MainView from "../../components/MainView";
 import NavigationBackBtn from "../../components/NavigationBackBtn";
+import color from "../../config/color";
 
 const ArticleViewScreen = ({ route, navigation }) => {
 	const { articleData } = route.params;
@@ -17,7 +18,7 @@ const ArticleViewScreen = ({ route, navigation }) => {
 			<MainView>
 				<View style={styles.container}>
 					<View style={styles.header}>
-						<NavigationBackBtn navigation={navigation} />
+						<NavigationBackBtn navigation={navigation} color={color.primary} />
 					</View>
 					<Image
 						source={{ uri: articleData.urlToImage }}

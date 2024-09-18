@@ -15,6 +15,10 @@ import landingImg from "../../assets/images/landing.png";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { fetchArticleData } from "../../utility/firebase-modules/DataHandling";
+import LoadingOverlay from "../../components/Loading";
+import NavigationBackBtn from "../../components/NavigationBackBtn";
+import color from "../../config/color";
+import font from "../../config/font";
 
 export const ArticleStack = ({}) => {
 	const Stack = createStackNavigator();
@@ -33,16 +37,18 @@ export const ArticleStack = ({}) => {
 
 const ArticlesScreen = ({ navigation }) => {
 	const [articles, setArticles] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchArticles = async () => {
+			setLoading(true);
 			const data = await fetchArticleData();
-			setArticles(data.articles.slice(0, 10));
-			// Implement Slicing for pagination.
+			setArticles(data.articles.slice(0, 10)); // Implement slicing for pagination.
+			setLoading(false);
 		};
 
 		fetchArticles();
-	}, [db]);
+	}, []);
 
 	const handleArticlePress = (article) => {
 		navigation.navigate("Article View", { articleData: article });
@@ -50,9 +56,13 @@ const ArticlesScreen = ({ navigation }) => {
 
 	return (
 		<MainView>
+			<View style={styles.headerContainer}>
+				<NavigationBackBtn navigation={navigation} color={color.primary} />
+				<Text style={styles.headerText}>Articles</Text>
+			</View>
 			<FlatList
 				data={articles}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(_i, index) => index}
 				renderItem={({ item }) => (
 					<TouchableOpacity onPress={() => handleArticlePress(item)}>
 						<View style={styles.articleItem}>
@@ -66,11 +76,26 @@ const ArticlesScreen = ({ navigation }) => {
 					</TouchableOpacity>
 				)}
 			/>
+			<LoadingOverlay isLoading={loading} />
 		</MainView>
 	);
 };
 
 const styles = StyleSheet.create({
+	headerContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginTop: 10,
+		marginBottom: 20,
+	},
+	headerText: {
+		fontFamily: font.fontFamily,
+		fontSize: 32,
+		fontWeight: "light",
+		color: color.primary,
+		textAlign: "left",
+		marginLeft: 10,
+	},
 	articleItem: {
 		marginBottom: 20,
 		padding: 10,

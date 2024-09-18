@@ -36,7 +36,9 @@ const ProductScreen = () => {
 			/>
 
 			{/* Product List */}
+
 			<FlatList
+				style={{ marginBottom: 20 }}
 				data={products}
 				keyExtractor={(item, index) => index.toString()} // Use index or a unique field
 				renderItem={({ item }) => (

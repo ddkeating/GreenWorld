@@ -26,6 +26,12 @@ const ProfileScreen = ({ navigation }) => {
 			try {
 				setLoading(true);
 				const monthlyData = await fetchMonthlyCarbonFootprintData();
+				console.log("Monthly Data: ", monthlyData); // Debugging line
+				if (monthlyData.length === 0) {
+					setCarouselItems([{ title: "No data available" }]);
+					setLoading(false);
+					return;
+				}
 				// Format the data for the carousel
 				const formattedData = monthlyData.map((data) => ({
 					title: formatMonthYear(data.month),

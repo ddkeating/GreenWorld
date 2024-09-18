@@ -58,10 +58,15 @@ const LoginScreen = ({ navigation }) => {
 
 	// Function to handle password reset via Firebase Auth API
 	const handlePasswordReset = async () => {
+		if (resetEmailSent) {
+			setError("Password reset email already sent. Check your inbox.");
+			return;
+		}
 		if (!email) {
 			setError("Please enter your email address");
 			return;
 		}
+
 		setError("");
 		setLoading(true);
 
